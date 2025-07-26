@@ -1,4 +1,4 @@
-// app/dashboard/timesheets/week/[id]/edit/page.tsx
+// app/dashboard/timesheets/week/[id]/view/page.tsx
 
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
@@ -8,20 +8,20 @@ import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import ThisWeeksTimesheet from '@/components/common/ThisWeeksTimesheet';
 
-import { TimesheetWeek } from '@/lib/types';
+import { TimesheetWeek } from '@/lib/mockData';
 
-interface EditPageProps {
-  params: { id: string };
+interface ViewPageProps {
+  params: Promise<{ id: string }>; // Changed to Promise
 }
 
-export default async function EditTimesheetPage({ params }: EditPageProps) {
+export default async function ViewTimesheetPage({ params }: ViewPageProps) {
   const session = await auth();
 
   if (!session || !session.user) {
     redirect('/auth');
   }
 
-  const { id } = params;
+  const { id } = await params; // AWAIT params here
   let timesheet: TimesheetWeek | null = null;
   let fetchError: string | null = null;
 
@@ -51,7 +51,7 @@ export default async function EditTimesheetPage({ params }: EditPageProps) {
 
     timesheet = await res.json();
   } catch (err: any) {
-    console.error('Error fetching timesheet for edit page:', err.message);
+    console.error('Error fetching timesheet for view page:', err.message);
     fetchError = `Could not load timesheet: ${err.message}`;
   }
 
@@ -61,7 +61,7 @@ export default async function EditTimesheetPage({ params }: EditPageProps) {
 
       <main className="p-4 md:p-8 flex-grow">
         <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-md p-6">
-          <h1 className="text-2xl font-bold text-gray-800 mb-6">Edit Timesheet</h1>
+          <h1 className="text-2xl font-bold text-gray-800 mb-6">View Timesheet</h1>
 
           {fetchError ? (
             <p className="text-red-500">{fetchError}</p>

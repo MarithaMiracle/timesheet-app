@@ -1,8 +1,9 @@
-// components/common/Header.tsx
-'use client'; // This component will have client-side interactivity for the dropdown
+// components/common/Header.tsx - Updated for hybrid system
+'use client';
 
 import Link from 'next/link';
-import { useSession, signOut } from 'next-auth/react'; // For session info and logout
+import { useSession, signOut } from 'next-auth/react';
+import { clearAdditionalData } from '@/lib/hybridMockData'; // Updated import
 import { useState } from 'react';
 
 interface HeaderProps {
@@ -13,7 +14,13 @@ export default function Header({ userName = 'User' }: HeaderProps) {
   const { data: session } = useSession();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const displayUserName = session?.user?.name || userName; // Prefer session name if available
+  const displayUserName = session?.user?.name || userName;
+
+  // Handle sign out with clearing additional data only
+  const handleSignOut = async () => {
+    clearAdditionalData(); // Only clears user additions, keeps original mock data
+    await signOut({ callbackUrl: '/auth' });
+  };
 
   return (
     <header className="bg-white shadow-sm py-4 px-6 border-b border-gray-200">
@@ -26,7 +33,6 @@ export default function Header({ userName = 'User' }: HeaderProps) {
             <Link href="/dashboard" className="text-gray-600 hover:text-blue-600 font-medium">
               Timesheets
             </Link>
-            {/* Add more nav links here if needed, e.g., <Link href="/reports">Reports</Link> */}
           </nav>
         </div>
 
@@ -50,12 +56,11 @@ export default function Header({ userName = 'User' }: HeaderProps) {
           {dropdownOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
               <button
-                onClick={() => signOut({ callbackUrl: '/auth' })} // Redirect to login after logout
+                onClick={handleSignOut}
                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               >
                 Sign out
               </button>
-              {/* Add other dropdown items like "Profile" if needed */}
             </div>
           )}
         </div>

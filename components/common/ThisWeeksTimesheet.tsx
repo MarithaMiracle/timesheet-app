@@ -203,7 +203,7 @@ export default function ThisWeeksTimesheet({ timesheet }: Props) {
   const groupedEntries = groupEntriesByDate(entries);
 
   return (
-    <div className="bg-white rounded-lg shadow p-6 md:p-8">
+    <div>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">This week's timesheet</h1>
@@ -212,9 +212,9 @@ export default function ThisWeeksTimesheet({ timesheet }: Props) {
         <div className="flex items-center mt-4 md:mt-0">
           <span className="text-sm font-medium text-gray-700 mr-3">{totalHours} / 40 hrs</span>
           <div className="w-32 bg-gray-200 rounded-full h-2">
-            <div className="bg-orange-500 h-2 rounded-full" style={{ width: '50%' }}></div>
+          <div className="bg-orange-500 h-2 rounded-full" style={{ width: `${progressPercentage}%` }}></div>
           </div>
-          <span className="text-sm text-gray-500 ml-3">100%</span>
+          <span className="text-sm text-gray-500 ml-3">{Math.round(progressPercentage)}%</span>
         </div>
       </div>
 

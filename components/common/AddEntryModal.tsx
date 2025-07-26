@@ -23,6 +23,7 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({
   const [workType, setWorkType] = useState("");
   const [description, setDescription] = useState("");
   const [hours, setHours] = useState(12);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleSubmit = () => {
     onSubmit({ project, workType, description, hours });
@@ -49,7 +50,9 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({
           <div className="mb-6">
             <label className="flex items-center text-sm font-medium text-gray-700 mb-2" htmlFor="project">
               Select Project *
-              <span className="material-icons text-gray-400 ml-1 text-base">info_outline</span>
+              <span className="ml-1 text-base">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0,0,256,256" width="16px" height="16px" fill-rule="nonzero"><g fill="#a9a9a9" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style={{ mixBlendMode: 'normal' }}><g transform="scale(4,4)"><path d="M32,6c-14.359,0 -26,11.641 -26,26c0,14.359 11.641,26 26,26c14.359,0 26,-11.641 26,-26c0,-14.359 -11.641,-26 -26,-26zM32.021,16c1.534,0 2.979,1.346 2.979,2.981c0,1.746 -1.445,3.019 -2.979,3.019c-1.796,0 -3.021,-1.273 -3.021,-3.019c0,-1.635 1.225,-2.981 3.021,-2.981zM39,47h-5h-4h-5v-3l5,-1v-13h-4v-3l8,-1v17l5,1z"></path></g></g></svg>
+                </span>
             </label>
             <div className="relative">
               <select
@@ -63,7 +66,15 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({
                 <option value="Project B">Project B</option>
               </select>
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl pointer-events-none">
-                ▼
+              <svg
+              className={`w-4 h-4 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
               </div>
             </div>
           </div>
@@ -71,7 +82,9 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({
           <div className="mb-6">
             <label className="flex items-center text-sm font-medium text-gray-700 mb-2" htmlFor="work-type">
               Type of Work *
-              <span className="material-icons text-gray-400 ml-1 text-base">info_outline</span>
+              <span className="ml-1 text-base">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0,0,256,256" width="16px" height="16px" fill-rule="nonzero"><g fill="#a9a9a9" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style={{ mixBlendMode: 'normal' }}><g transform="scale(4,4)"><path d="M32,6c-14.359,0 -26,11.641 -26,26c0,14.359 11.641,26 26,26c14.359,0 26,-11.641 26,-26c0,-14.359 -11.641,-26 -26,-26zM32.021,16c1.534,0 2.979,1.346 2.979,2.981c0,1.746 -1.445,3.019 -2.979,3.019c-1.796,0 -3.021,-1.273 -3.021,-3.019c0,-1.635 1.225,-2.981 3.021,-2.981zM39,47h-5h-4h-5v-3l5,-1v-13h-4v-3l8,-1v17l5,1z"></path></g></g></svg>
+                </span>
             </label>
             <div className="relative">
               <select
@@ -85,7 +98,15 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({
                 <option value="Feature Development">Feature Development</option>
               </select>
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl pointer-events-none">
-                ▼
+              <svg
+              className={`w-4 h-4 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
               </div>
             </div>
           </div>
