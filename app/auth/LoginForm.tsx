@@ -1,48 +1,41 @@
-// app/auth/LoginForm.tsx
-'use client'; // This component will have client-side interactivity
+'use client';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react'; // For next-auth authentication
-import { useRouter } from 'next/navigation'; // For redirection
-
-// We'll create these UI components in components/ui later
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
-// We might create a dedicated Checkbox component if needed, or inline for simplicity here
+
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState<string | null>(null); // For displaying login errors
-  const [loading, setLoading] = useState(false); // For showing loading state on button
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false); 
 
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(null); // Clear previous errors
+    setError(null);
 
     try {
-      // Dummy authentication logic via next-auth's CredentialsProvider
       const result = await signIn('credentials', {
-        redirect: false, // Prevent next-auth from redirecting automatically
+        redirect: false,
         email,
         password,
-        rememberMe, // Pass 'rememberMe' if your credential provider uses it
+        rememberMe,
       });
 
       if (result?.error) {
-        // ✅ IMPROVED: Handle the specific CredentialsSignin case
         if (result.error === 'CredentialsSignin') {
           setError('Invalid email or password. Please use test@example.com and password123');
         } else {
-          // Use the custom error message from auth.ts
           setError(result.error);
         }
       } else if (result?.ok) {
-        // On success, redirect to dashboard
         router.push('/dashboard');
       }
     } catch (err) {
@@ -65,7 +58,6 @@ export default function LoginForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          // Add error state prop here later for validation
         />
       </div>
       <div className="mb-6">
@@ -78,7 +70,6 @@ export default function LoginForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          // Add error state prop here later for validation
         />
       </div>
       <div className="flex items-center mb-6">
@@ -95,7 +86,6 @@ export default function LoginForm() {
         </label>
       </div>
 
-      {/* ✅ IMPROVED: Better error styling */}
       {error && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
           <p className="text-red-600 text-sm">{error}</p>
@@ -109,8 +99,8 @@ export default function LoginForm() {
 
       <Button
         type="submit"
-        className="w-full" // Tailwind class to make it full width
-        disabled={loading} // Disable button while loading
+        className="w-full"
+        disabled={loading}
       >
         {loading ? 'Signing in...' : 'Sign in'}
       </Button>

@@ -1,13 +1,10 @@
-// lib/mockData.ts - Corrected with proper status distribution
-
 export interface TimesheetEntry {
   id: string;
   projectId: string;
   projectName: string;
-  date: string; // YYYY-MM-DD
+  date: string;
   hours: number;
   description: string;
-  // Compatibility fields for your existing component
   hoursWorked: number;
   taskDescription: string;
   project?: string;
@@ -21,10 +18,9 @@ export interface TimesheetWeek {
   entries: TimesheetEntry[];
   totalHours: number;
   week?: string;
-  // Note: status is derived from totalHours using getTimesheetStatus() function
 }
 
-// Helper function to create entry with compatibility fields
+
 const createEntry = (base: Omit<TimesheetEntry, 'hoursWorked' | 'taskDescription' | 'project'>): TimesheetEntry => ({
   ...base,
   hoursWorked: base.hours,
@@ -32,7 +28,6 @@ const createEntry = (base: Omit<TimesheetEntry, 'hoursWorked' | 'taskDescription
   project: base.projectName,
 });
 
-// Helper function to format week string
 const formatWeekString = (startDate: string, endDate: string): string => {
   const start = new Date(startDate);
   const end = new Date(endDate);
@@ -40,7 +35,7 @@ const formatWeekString = (startDate: string, endDate: string): string => {
 };
 
 export const mockTimesheetData: TimesheetWeek[] = [
-  // COMPLETED - Exactly 40 hours
+  
   {
     id: 'week-1',
     weekNumber: 27,
@@ -57,7 +52,6 @@ export const mockTimesheetData: TimesheetWeek[] = [
     get week() { return formatWeekString(this.startDate, this.endDate); },
   },
 
-  // INCOMPLETE - Less than 40 hours (25 hours)
   {
     id: 'week-2',
     weekNumber: 28,
@@ -74,7 +68,6 @@ export const mockTimesheetData: TimesheetWeek[] = [
     get week() { return formatWeekString(this.startDate, this.endDate); },
   },
 
-  // INCOMPLETE - Less than 40 hours (18 hours)
   {
     id: 'week-3',
     weekNumber: 29,
@@ -90,7 +83,6 @@ export const mockTimesheetData: TimesheetWeek[] = [
     get week() { return formatWeekString(this.startDate, this.endDate); },
   },
 
-  // MISSING - Tasks exist but with 0 hours each
   {
     id: 'week-4',
     weekNumber: 30,
@@ -107,7 +99,6 @@ export const mockTimesheetData: TimesheetWeek[] = [
     get week() { return formatWeekString(this.startDate, this.endDate); },
   },
 
-  // ANOTHER MISSING - Tasks exist but with 0 hours each
   {
     id: 'week-5',
     weekNumber: 31,

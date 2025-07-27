@@ -1,16 +1,15 @@
-// types/timesheet.ts
 export interface TimesheetEntry {
     id: string;
     date: string;
     hoursWorked: number;
     status: 'completed' | 'incomplete' | 'missing';
     description: string;
-    taskDescription: string; // Added this property
+    taskDescription: string;
   }
   
   export interface TimesheetWeek {
     id: string;
-    week: string; // Added this property
+    week: string;
     weekNumber: number;
     startDate: string;
     endDate: string;

@@ -1,5 +1,3 @@
-// app/dashboard/timesheets/week/[id]/route.ts
-
 import { NextRequest, NextResponse } from 'next/server';
 import { mockTimesheetData } from '@/lib/mockData';
 import { getServerSession } from 'next-auth';
@@ -16,7 +14,6 @@ export async function GET(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  // In a real app, you'd filter by userId too. But mock data doesn't have userId.
   const timesheet = mockTimesheetData.find((week) => week.id === params.id);
 
   if (!timesheet) {

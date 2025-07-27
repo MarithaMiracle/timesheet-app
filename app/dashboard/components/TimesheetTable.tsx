@@ -1,38 +1,28 @@
-// app/dashboard/components/TimesheetTable.tsx
 'use client';
 
-// Import TimesheetWeek and the new TimesheetStatus
 import { TimesheetWeek, TimesheetStatus } from '../../../lib/types';
-import { cn, formatDateRange, getTimesheetStatus } from '../../../lib/utils'; // Import getTimesheetStatus
+import { cn, formatDateRange, getTimesheetStatus } from '../../../lib/utils';
 import { useRouter } from 'next/navigation';
-
-// Import our generic table UI components
-import Table from '../../../components/ui/Table/Table';
-import TableBody from '../../../components/ui/Table/TableBody';
-import TableCell from '../../../components/ui/Table/TableCell';
-import TableHead from '../../../components/ui/Table/TableHead';
-import TableRow from '../../../components/ui/Table/TableRow';
 
 interface TimesheetTableProps {
   timesheetWeeks: TimesheetWeek[];
 }
 
-// Helper component for the colored status badge (now for completed/incomplete/missing)
 const StatusBadge: React.FC<{ status: TimesheetStatus }> = ({ status }) => {
   let bgColorClass = '';
   let textColorClass = '';
 
   switch (status) {
     case 'completed':
-      bgColorClass = 'bg-green-100'; // Green for completed
+      bgColorClass = 'bg-green-100';
       textColorClass = 'text-green-800';
       break;
     case 'incomplete':
-      bgColorClass = 'bg-yellow-100'; // Yellow for incomplete
+      bgColorClass = 'bg-yellow-100';
       textColorClass = 'text-yellow-800';
       break;
     case 'missing':
-      bgColorClass = 'bg-red-100'; // Red for missing
+      bgColorClass = 'bg-red-100';
       textColorClass = 'text-red-800';
       break;
     default:
@@ -68,68 +58,117 @@ export default function TimesheetTable({ timesheetWeeks }: TimesheetTableProps) 
   };
 
   return (
-    <div className="overflow-x-auto rounded-lg shadow-md">
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell className="font-semibold text-gray-700 bg-gray-50">WEEK #</TableCell>
-            <TableCell className="font-semibold text-gray-700">DATE</TableCell>
-            <TableCell className="font-semibold text-gray-700">STATUS</TableCell>
-            <TableCell className="font-semibold text-gray-700 text-right">ACTIONS</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {timesheetWeeks.map((week) => (
-            <TableRow key={week.id} className="bg-white">
-              <TableCell className="text-gray-600 bg-gray-50">{week.weekNumber}</TableCell>
-              <TableCell className="text-gray-600">{formatDateRange(week.startDate, week.endDate)}</TableCell>
-              <TableCell>
-                {/* Now deriving and displaying status based on totalHours */}
-                <StatusBadge status={getTimesheetStatus(week.totalHours)} />
-              </TableCell>
-              <TableCell className="text-right">
-                {/* Action buttons based on the new status logic */}
+    <>
+      {/* Mobile Card View */}
+      <div className="block sm:hidden space-y-4">
+        {timesheetWeeks.map((week) => {
+          const currentStatus = getTimesheetStatus(week.totalHours);
+          return (
+            <div key={week.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+              <div className="flex justify-between items-start mb-3">
+                <div>
+                  <h3 className="font-semibold text-gray-900">Week #{week.weekNumber}</h3>
+                  <p className="text-sm text-gray-600 mt-1">{formatDateRange(week.startDate, week.endDate)}</p>
+                </div>
+                <StatusBadge status={currentStatus} />
+              </div>
+              
+              <div className="flex justify-end">
                 {(() => {
-                  const currentStatus = getTimesheetStatus(week.totalHours);
-
                   if (currentStatus === 'completed') {
-                    // For completed, typically you'd view or maybe submit if it's not already
                     return (
                       <button
                         onClick={() => handleActionClick('view', week.id)}
-                        className="text-blue-600 hover:text-blue-800 font-medium focus:outline-none focus:underline"
+                        className="text-blue-600 hover:text-blue-800 font-medium text-sm focus:outline-none focus:underline"
                       >
                         View
                       </button>
                     );
                   } else if (currentStatus === 'incomplete') {
-                    // For incomplete, user needs to update
                     return (
                       <button
                         onClick={() => handleActionClick('update', week.id)}
-                        className="text-blue-600 hover:text-blue-800 font-medium focus:outline-none focus:underline"
+                        className="text-blue-600 hover:text-blue-800 font-medium text-sm focus:outline-none focus:underline"
                       >
                         Update
                       </button>
                     );
                   } else if (currentStatus === 'missing') {
-                    // For missing, user needs to create/enter hours
                     return (
                       <button
-                        onClick={() => handleActionClick('create', week.id)} // Could be 'create' or 'update' for missing
-                        className="text-blue-600 hover:text-blue-800 font-medium focus:outline-none focus:underline"
+                        onClick={() => handleActionClick('create', week.id)}
+                        className="text-blue-600 hover:text-blue-800 font-medium text-sm focus:outline-none focus:underline"
                       >
                         Create
                       </button>
                     );
                   }
-                  return null; // No action for other unhandled cases (shouldn't be any with these 3 statuses)
+                  return null;
                 })()}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="hidden sm:block overflow-x-auto rounded-lg shadow-md">
+        <table className="w-full">
+          <thead className="text-left text-xs text-gray-500 uppercase tracking-wider border-b border-gray-200 bg-gray-50">
+            <tr>
+              <th className="py-4 px-4 font-semibold text-gray-700">WEEK #</th>
+              <th className="py-4 px-4 font-semibold text-gray-700">DATE</th>
+              <th className="py-4 px-4 font-semibold text-gray-700">STATUS</th>
+              <th className="py-4 px-4 font-semibold text-gray-700 text-right">ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            {timesheetWeeks.map((week) => (
+              <tr key={week.id} className="bg-white border-b border-gray-200">
+                <td className="py-4 px-4 text-gray-600 bg-gray-50">{week.weekNumber}</td>
+                <td className="py-4 px-4 text-gray-600">{formatDateRange(week.startDate, week.endDate)}</td>
+                <td className="py-4 px-4">
+                  <StatusBadge status={getTimesheetStatus(week.totalHours)} />
+                </td>
+                <td className="py-4 px-4 text-right">
+                  {(() => {
+                    const currentStatus = getTimesheetStatus(week.totalHours);
+                    if (currentStatus === 'completed') {
+                      return (
+                        <button
+                          onClick={() => handleActionClick('view', week.id)}
+                          className="text-blue-600 hover:text-blue-800 font-medium focus:outline-none focus:underline"
+                        >
+                          View
+                        </button>
+                      );
+                    } else if (currentStatus === 'incomplete') {
+                      return (
+                        <button
+                          onClick={() => handleActionClick('update', week.id)}
+                          className="text-blue-600 hover:text-blue-800 font-medium focus:outline-none focus:underline"
+                        >
+                          Update
+                        </button>
+                      );
+                    } else if (currentStatus === 'missing') {
+                      return (
+                        <button
+                          onClick={() => handleActionClick('create', week.id)}
+                          className="text-blue-600 hover:text-blue-800 font-medium focus:outline-none focus:underline"
+                        >
+                          Create
+                        </button>
+                      );
+                    }
+                    return null;
+                  })()}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }

@@ -1,5 +1,3 @@
-// app/dashboard/timesheets/week/new/page.tsx
-
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
@@ -11,20 +9,22 @@ export default async function NewTimesheetPage() {
   const session = await auth();
 
   if (!session || !session.user) {
-    redirect('/auth'); // Redirect if user is not logged in
+    redirect('/auth');
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 mb-20 flex flex-col">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
       <Header userName={session.user.name || 'John Doe'} />
 
-      <main className="p-4 md:p-8">
-        <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-md p-6">
+      <main className="p-4 sm:p-6 lg:p-8 flex-1">
+        <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-md p-4 sm:p-6">
           <ThisWeeksTimesheet />
         </div>
       </main>
 
-      <Footer />
+      <div className="p-4 sm:p-6 lg:p-8">
+        <Footer />
+      </div>
     </div>
   );
 }

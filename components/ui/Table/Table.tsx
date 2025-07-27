@@ -1,6 +1,5 @@
-// components/ui/Table/Table.tsx
 import * as React from 'react';
-import { cn } from '../../../lib/utils'; // Adjust path to utils if different
+import { cn } from '../../../lib/utils';
 
 type TableProps = React.TableHTMLAttributes<HTMLTableElement>;
 

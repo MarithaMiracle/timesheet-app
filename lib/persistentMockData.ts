@@ -1,27 +1,21 @@
-// lib/persistentMockData.ts - New file for persistent mock data
+import { TimesheetWeek, TimesheetEntry } from '@/types/timesheet';
 
-import { TimesheetWeek, TimesheetEntry } from '@/types/timesheet'; // Use shared types
-
-// Helper function to calculate total hours
 const calculateTotalHours = (entries: TimesheetEntry[]): number => {
   return entries.reduce((sum, entry) => sum + entry.hoursWorked, 0);
 };
 
-// Helper function to format week string
 const formatWeekString = (startDate: string, endDate: string): string => {
   const start = new Date(startDate);
   const end = new Date(endDate);
   return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}, ${end.getFullYear()}`;
 };
 
-// Helper function to determine status based on hours
 const calculateStatus = (totalHours: number): 'completed' | 'incomplete' | 'missing' => {
   if (totalHours === 0) return 'missing';
   if (totalHours >= 40) return 'completed';
   return 'incomplete';
 };
 
-// Original mock data as the default
 const createOriginalMockData = (): TimesheetWeek[] => [
   {
     id: 'week-1',
@@ -29,8 +23,8 @@ const createOriginalMockData = (): TimesheetWeek[] => [
     weekNumber: 27,
     startDate: '2024-06-30',
     endDate: '2024-07-06',
-    totalHours: 0, // Will be calculated
-    status: 'missing', // Will be calculated
+    totalHours: 0,
+    status: 'missing',
     entries: [
       {
         id: 'entry-1-1',
@@ -80,8 +74,8 @@ const createOriginalMockData = (): TimesheetWeek[] => [
     weekNumber: 28,
     startDate: '2024-07-07',
     endDate: '2024-07-13',
-    totalHours: 0, // Will be calculated
-    status: 'missing', // Will be calculated
+    totalHours: 0,
+    status: 'missing',
     entries: [
       {
         id: 'entry-2-1',
@@ -115,8 +109,8 @@ const createOriginalMockData = (): TimesheetWeek[] => [
     weekNumber: 29,
     startDate: '2024-07-14',
     endDate: '2024-07-20',
-    totalHours: 0, // Will be calculated
-    status: 'missing', // Will be calculated
+    totalHours: 0,
+    status: 'missing',
     entries: [
       {
         id: 'entry-3-1',
@@ -130,7 +124,6 @@ const createOriginalMockData = (): TimesheetWeek[] => [
   }
 ];
 
-// Calculate totals and status for each week
 const processWeekData = (weeks: TimesheetWeek[]): TimesheetWeek[] => {
   return weeks.map(week => {
     const totalHours = calculateTotalHours(week.entries);
@@ -142,13 +135,10 @@ const processWeekData = (weeks: TimesheetWeek[]): TimesheetWeek[] => {
   });
 };
 
-// Key for session storage
 const STORAGE_KEY = 'timesheet_data';
 
-// Get data from session storage or use default
 export const getPersistentMockData = (): TimesheetWeek[] => {
   if (typeof window === 'undefined') {
-    // Server-side: return original data
     return processWeekData(createOriginalMockData());
   }
 
@@ -156,23 +146,19 @@ export const getPersistentMockData = (): TimesheetWeek[] => {
     const stored = sessionStorage.getItem(STORAGE_KEY);
     if (stored) {
       const parsed: TimesheetWeek[] = JSON.parse(stored);
-      // Ensure data is properly processed
       return processWeekData(parsed);
     }
   } catch (error) {
     console.error('Error loading timesheet data from session storage:', error);
   }
 
-  // Fallback to original data
   return processWeekData(createOriginalMockData());
 };
 
-// Save data to session storage
 export const savePersistentMockData = (data: TimesheetWeek[]): void => {
   if (typeof window === 'undefined') return;
 
   try {
-    // Process data before saving to ensure consistency
     const processedData = processWeekData(data);
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(processedData));
   } catch (error) {
@@ -180,7 +166,6 @@ export const savePersistentMockData = (data: TimesheetWeek[]): void => {
   }
 };
 
-// Clear data on logout
 export const clearPersistentMockData = (): void => {
   if (typeof window === 'undefined') return;
   
@@ -191,10 +176,8 @@ export const clearPersistentMockData = (): void => {
   }
 };
 
-// Initialize data (call this once when the app starts)
 let mockTimesheetData: TimesheetWeek[] = processWeekData(createOriginalMockData());
 
-// Export functions to manage the data
 export const getMockTimesheetData = (): TimesheetWeek[] => {
   return mockTimesheetData;
 };
@@ -214,7 +197,6 @@ export const updateTimesheetById = (id: string, updates: Partial<TimesheetWeek>)
     const updatedWeek = { ...mockTimesheetData[index], ...updates };
     mockTimesheetData[index] = updatedWeek;
     
-    // Recalculate totals and status for the updated week
     mockTimesheetData[index] = processWeekData([mockTimesheetData[index]])[0];
     
     savePersistentMockData(mockTimesheetData);
@@ -253,7 +235,6 @@ export const updateTimesheetEntry = (weekId: string, entryId: string, updates: P
   return updatedEntry;
 };
 
-// Initialize data on first load (client-side only)
 if (typeof window !== 'undefined') {
   mockTimesheetData = getPersistentMockData();
 }

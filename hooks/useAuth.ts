@@ -1,4 +1,3 @@
-// hooks/useAuth.ts
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
@@ -23,7 +22,6 @@ export default function useAuth(): UseAuthReturn {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  // Memoized user object
   const user = useMemo(() => {
     if (session?.user) {
       return {
@@ -35,12 +33,10 @@ export default function useAuth(): UseAuthReturn {
     return null;
   }, [session]);
 
-  // Computed authentication state
   const isAuthenticated = status === 'authenticated' && !!session;
   const loading = status === 'loading';
   const error = status === 'unauthenticated' && !loading ? null : null;
 
-  // Custom sign out function
   const handleSignOut = useCallback(async () => {
     try {
       await signOut({ callbackUrl: '/auth' });
@@ -49,7 +45,6 @@ export default function useAuth(): UseAuthReturn {
     }
   }, []);
 
-  // Function to require authentication - throws if not authenticated
   const requireAuth = useCallback(() => {
     if (!isAuthenticated && !loading) {
       throw new Error('Authentication required');

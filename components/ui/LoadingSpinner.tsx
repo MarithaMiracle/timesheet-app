@@ -1,4 +1,3 @@
-// components/ui/LoadingSpinner.tsx
 import React from 'react';
 import { cn } from '../../lib/utils';
 
@@ -72,7 +71,6 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
 
 export default LoadingSpinner;
 
-// Skeleton loading component for content placeholders
 export const SkeletonLoader: React.FC<{
   lines?: number;
   className?: string;
@@ -104,7 +102,6 @@ export const SkeletonLoader: React.FC<{
   );
 };
 
-// Page loading component
 export const PageLoader: React.FC<{ message?: string }> = ({
   message = 'Loading...',
 }) => {
@@ -118,7 +115,6 @@ export const PageLoader: React.FC<{ message?: string }> = ({
   );
 };
 
-// Button loading state
 export const ButtonLoader: React.FC<{ className?: string }> = ({ className }) => {
   return (
     <LoadingSpinner 

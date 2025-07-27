@@ -1,4 +1,3 @@
-// hooks/useForm.ts
 import { useState, useCallback, useMemo } from 'react';
 import { z } from 'zod';
 
@@ -50,7 +49,6 @@ export default function useForm<T extends Record<string, any>>({
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Computed properties
   const isValid = useMemo(() => {
     return Object.values(errors).every(error => error === null);
   }, [errors]);
@@ -59,12 +57,10 @@ export default function useForm<T extends Record<string, any>>({
     return JSON.stringify(values) !== JSON.stringify(initialValues);
   }, [values, initialValues]);
 
-  // Validate single field
   const validateField = useCallback(async (field: keyof T): Promise<string | null> => {
     if (!validationSchema) return null;
 
     try {
-      // Validate just the single field value
       const fieldValue = values[field];
       await validationSchema.parseAsync({ ...values, [field]: fieldValue });
       return null;
@@ -77,13 +73,12 @@ export default function useForm<T extends Record<string, any>>({
     }
   }, [validationSchema, values]);
 
-  // Validate entire form
   const validateForm = useCallback(async (): Promise<boolean> => {
     if (!validationSchema) return true;
 
     try {
       await validationSchema.parseAsync(values);
-      // Clear all errors if validation passes
+      
       const clearedErrors = Object.keys(initialValues).reduce((acc, key) => {
         acc[key as keyof T] = null;
         return acc;
@@ -97,7 +92,6 @@ export default function useForm<T extends Record<string, any>>({
           return acc;
         }, {} as Record<keyof T, string | null>);
 
-        // Set new errors from validation
         error.issues.forEach(err => {
           const field = err.path[0] as keyof T;
           if (field && field in newErrors) {
@@ -111,7 +105,6 @@ export default function useForm<T extends Record<string, any>>({
     }
   }, [validationSchema, values, initialValues]);
 
-  // Handle field changes
   const handleChange = useCallback((field: keyof T) => async (value: any) => {
     setValues(prev => ({ ...prev, [field]: value }));
 
@@ -121,7 +114,6 @@ export default function useForm<T extends Record<string, any>>({
     }
   }, [validateOnChange, validateField]);
 
-  // Handle field blur
   const handleBlur = useCallback((field: keyof T) => async () => {
     setTouched(prev => ({ ...prev, [field]: true }));
 
@@ -131,7 +123,6 @@ export default function useForm<T extends Record<string, any>>({
     }
   }, [validateOnBlur, validateField]);
 
-  // Handle form submission
   const handleSubmit = useCallback(async (e?: React.FormEvent) => {
     if (e) {
       e.preventDefault();
@@ -152,22 +143,18 @@ export default function useForm<T extends Record<string, any>>({
     }
   }, [validateForm, onSubmit, values]);
 
-  // Set field value
   const setFieldValue = useCallback((field: keyof T, value: any) => {
     setValues(prev => ({ ...prev, [field]: value }));
   }, []);
 
-  // Set field error
   const setFieldError = useCallback((field: keyof T, error: string | null) => {
     setErrors(prev => ({ ...prev, [field]: error }));
   }, []);
 
-  // Set field touched
   const setFieldTouched = useCallback((field: keyof T, touched: boolean) => {
     setTouched(prev => ({ ...prev, [field]: touched }));
   }, []);
 
-  // Reset form
   const resetForm = useCallback((newValues?: T) => {
     const resetValues = newValues || initialValues;
     setValues(resetValues);

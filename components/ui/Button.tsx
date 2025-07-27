@@ -1,9 +1,7 @@
-// components/ui/Button.tsx
 import * as React from 'react';
-import { cn } from '../../lib/utils'; // We'll create this utility for conditional classes
+import { cn } from '../../lib/utils';
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  // You can add variants here for different button styles (primary, secondary, danger) 
   variant?: 'primary' | 'secondary' | 'danger';
 };
 

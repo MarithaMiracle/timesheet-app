@@ -1,5 +1,3 @@
-// app/dashboard/timesheets/week/[id]/edit/page.tsx
-
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
@@ -8,10 +6,10 @@ import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import ThisWeeksTimesheet from '@/components/common/ThisWeeksTimesheet';
 
-import { TimesheetWeek } from '@/types/timesheet'; // Import from shared types
+import { TimesheetWeek } from '@/types/timesheet';
 
 interface EditPageProps {
-  params: Promise<{ id: string }>; // Changed to Promise
+  params: Promise<{ id: string }>;
 }
 
 export default async function EditTimesheetPage({ params }: EditPageProps) {
@@ -21,7 +19,7 @@ export default async function EditTimesheetPage({ params }: EditPageProps) {
     redirect('/auth');
   }
 
-  const { id } = await params; // AWAIT params here
+  const { id } = await params;
   let timesheet: TimesheetWeek | null = null;
   let fetchError: string | null = null;
 
@@ -57,22 +55,24 @@ export default async function EditTimesheetPage({ params }: EditPageProps) {
   }
 
   return (
-    <div className="min-h-screen mb-20 bg-gray-100 flex flex-col">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
       <Header userName={session.user.name || 'John Doe'} />
 
-      <main className="p-4 md:p-8">
-        <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-md p-6">
+      <main className="p-4 sm:p-6 lg:p-8 flex-1">
+        <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-md p-4 sm:p-6">
           {fetchError ? (
-            <p className="text-red-500">{fetchError}</p>
+            <p className="text-red-500 text-center py-8">{fetchError}</p>
           ) : timesheet ? (
             <ThisWeeksTimesheet timesheet={timesheet} />
           ) : (
-            <p className="text-gray-500">Loading...</p>
+            <p className="text-gray-500 text-center py-8">Loading...</p>
           )}
         </div>
       </main>
 
-      <Footer />
+      <div className="p-4 sm:p-6 lg:p-8">
+        <Footer />
+      </div>
     </div>
   );
 }

@@ -1,4 +1,3 @@
-// components/common/ErrorBoundary.tsx
 'use client';
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
@@ -24,21 +23,15 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error): State {
-    // Update state so the next render will show the fallback UI
     return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Log error to console in development
     if (process.env.NODE_ENV === 'development') {
       console.error('ErrorBoundary caught an error:', error, errorInfo);
     }
 
-    // Call optional error handler
     this.props.onError?.(error, errorInfo);
-
-    // In production, you might want to log to an error reporting service
-    // Example: logErrorToService(error, errorInfo);
 
     this.setState({ error, errorInfo });
   }
@@ -53,12 +46,10 @@ class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      // Custom fallback UI
       if (this.props.fallback) {
         return this.props.fallback;
       }
 
-      // Default error UI
       return (
         <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
           <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -88,7 +79,6 @@ class ErrorBoundary extends Component<Props, State> {
                   We&apos;re sorry, but an unexpected error occurred. Please try refreshing the page or contact support if the problem persists.
                 </p>
 
-                {/* Show error details in development */}
                 {process.env.NODE_ENV === 'development' && this.state.error && (
                   <details className="text-left mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
                     <summary className="cursor-pointer text-sm font-medium text-red-800 mb-2">
@@ -138,7 +128,6 @@ class ErrorBoundary extends Component<Props, State> {
 
 export default ErrorBoundary;
 
-// HOC for wrapping components with error boundary
 export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
   fallback?: ReactNode,

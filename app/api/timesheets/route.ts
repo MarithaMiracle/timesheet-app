@@ -1,10 +1,8 @@
-// app/api/timesheets/route.ts - Proper API architecture
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { mockTimesheetData } from '@/lib/mockData'; // ✅ API can import mock data
+import { mockTimesheetData } from '@/lib/mockData';
 import { getUserAdditions, saveUserAdditions } from '@/lib/sessionStorage';
 
-// Define proper TypeScript interfaces
 interface TimesheetEntry {
   id?: string;
   projectId?: string;
@@ -20,10 +18,9 @@ interface TimesheetEntry {
 interface PostRequestBody {
   weekId?: string;
   entries?: TimesheetEntry[];
-  [key: string]: unknown; // For any additional properties
+  [key: string]: unknown;
 }
 
-// GET /api/timesheets - API handles data, components don't touch mock data directly
 export async function GET() {
   const session = await auth();
 
@@ -32,17 +29,14 @@ export async function GET() {
   }
 
   try {
-    // ✅ API layer combines mock data + user additions
+    
     const userAdditions = getUserAdditions();
     
     const combinedData = mockTimesheetData.map(week => {
       const weekCopy = { ...week };
       
-      // Add user entries if they exist for this week
       if (userAdditions[week.id] && userAdditions[week.id].length > 0) {
         weekCopy.entries = [...week.entries, ...userAdditions[week.id]];
-        // Recalculate total hours with user additions
-        // Note: totalHours getter will automatically calculate this
       }
       
       return weekCopy;
@@ -57,7 +51,6 @@ export async function GET() {
   }
 }
 
-// POST /api/timesheets - API handles saving user data
 export async function POST(request: NextRequest) {
   const session = await auth();
 
@@ -69,11 +62,9 @@ export async function POST(request: NextRequest) {
     const body: PostRequestBody = await request.json();
     console.log("✅ API received timesheet data:", body);
 
-    // ✅ API handles the business logic of saving user additions
     if (body.weekId && body.entries) {
       const userAdditions = getUserAdditions();
       
-      // Add entries to user's additions for this week
       if (!userAdditions[body.weekId]) {
         userAdditions[body.weekId] = [];
       }

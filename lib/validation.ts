@@ -1,7 +1,5 @@
-// lib/validation.ts
 import { z } from 'zod';
 
-// Login form validation schema
 export const loginSchema = z.object({
   email: z
     .string()
@@ -16,7 +14,6 @@ export const loginSchema = z.object({
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 
-// Timesheet entry validation schema
 export const timesheetEntrySchema = z.object({
   project: z.string().min(1, 'Project is required'),
   workType: z.string().min(1, 'Work type is required'),
@@ -34,7 +31,6 @@ export const timesheetEntrySchema = z.object({
 
 export type TimesheetEntryFormData = z.infer<typeof timesheetEntrySchema>;
 
-// Timesheet week validation schema
 export const timesheetWeekSchema = z.object({
   week: z.string().min(1, 'Week is required'),
   entries: z.array(timesheetEntrySchema).min(1, 'At least one entry is required'),
@@ -42,7 +38,6 @@ export const timesheetWeekSchema = z.object({
 
 export type TimesheetWeekFormData = z.infer<typeof timesheetWeekSchema>;
 
-// Generic validation function
 export function validateForm<T>(
   schema: z.ZodSchema<T>,
   data: unknown
@@ -62,13 +57,11 @@ export function validateForm<T>(
   return { success: false, errors };
 }
 
-// Email validation utility
 export const isValidEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
 
-// Password strength validation
 export const getPasswordStrength = (password: string): {
   score: number;
   feedback: string[];
@@ -109,7 +102,6 @@ export const getPasswordStrength = (password: string): {
   return { score, feedback };
 };
 
-// Form field validation helpers
 export const validateRequired = (value: string, fieldName: string): string | null => {
   if (!value || value.trim().length === 0) {
     return `${fieldName} is required`;
@@ -152,7 +144,6 @@ export const validateHours = (hours: number): string | null => {
   return null;
 };
 
-// Date validation helpers
 export const validateDate = (dateString: string): string | null => {
   const date = new Date(dateString);
   if (isNaN(date.getTime())) {
@@ -161,14 +152,14 @@ export const validateDate = (dateString: string): string | null => {
   
   const today = new Date();
   const maxDate = new Date();
-  maxDate.setDate(today.getDate() + 7); // Max 7 days in future
+  maxDate.setDate(today.getDate() + 7);
   
   if (date > maxDate) {
     return 'Date cannot be more than 7 days in the future';
   }
   
   const minDate = new Date();
-  minDate.setDate(today.getDate() - 30); // Max 30 days in past
+  minDate.setDate(today.getDate() - 30);
   
   if (date < minDate) {
     return 'Date cannot be more than 30 days in the past';
@@ -177,12 +168,10 @@ export const validateDate = (dateString: string): string | null => {
   return null;
 };
 
-// Async validation for unique fields (mock implementation)
 export const validateUniqueEmail = async (email: string): Promise<string | null> => {
-  // Simulate API call
+  
   await new Promise(resolve => setTimeout(resolve, 500));
   
-  // Mock validation - in real app, this would call your API
   const existingEmails = ['existing@example.com', 'taken@example.com'];
   
   if (existingEmails.includes(email.toLowerCase())) {

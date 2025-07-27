@@ -1,5 +1,4 @@
-// components/providers/NextAuthSessionProvider.tsx
-'use client'; // This directive makes it a Client Component
+'use client';
 
 import { SessionProvider } from 'next-auth/react';
 import React from 'react';

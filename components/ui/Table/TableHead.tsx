@@ -1,4 +1,3 @@
-// components/ui/Table/TableHead.tsx
 import * as React from 'react';
 import { cn } from '../../../lib/utils';
 
