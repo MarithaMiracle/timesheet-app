@@ -27,7 +27,8 @@ export const authOptions: NextAuthOptions = {
           };
         } else {
           // If authentication fails, return null
-          return null;
+          // ✅ CHANGE THIS LINE: Instead of returning null, throw an error
+throw new Error('Invalid email or password! Please use test@example.com and password123');
         }
       },
     }),

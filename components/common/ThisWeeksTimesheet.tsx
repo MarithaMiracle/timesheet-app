@@ -43,38 +43,118 @@ const groupEntriesByDate = (entries: TimesheetEntry[]) => {
   return grouped;
 };
 
-// Helper to normalize entry data
-const normalizeEntry = (entry: TimesheetEntry): TimesheetEntry => ({
-  id: entry.id || `entry-${Date.now()}-${Math.random()}`,
-  date: entry.date,
-  hoursWorked: entry.hoursWorked || entry.hours || 0,
-  taskDescription: entry.taskDescription || entry.description || '',
-  project: entry.project || entry.projectName || 'Default Project'
-});
+// Helper to create realistic mock entries based on timesheet status
+const createRichMockEntries = (timesheet?: TimesheetWeek | null | { id?: string; totalHours?: number }): TimesheetEntry[] => {
+  const baseId = timesheet?.id || 'new';
+  
+  // Determine target hours based on timesheet status or default to 0 for new timesheets
+  let targetHours = 0; // Default for new/create scenario (missing status)
+  
+  if (timesheet && 'totalHours' in timesheet && timesheet.totalHours !== undefined) {
+    targetHours = timesheet.totalHours;
+  }
+  
+  console.log(`Creating mock entries for ${baseId} with target hours: ${targetHours}`);
+  
+  // Base entries that we'll adjust hours for
+  const baseEntries = [
+    {
+      id: `mock-${baseId}-1`,
+      date: "2024-01-21",
+      taskDescription: "Homepage Development - Implemented responsive navigation and hero section",
+      project: "Website Redesign"
+    },
+    {
+      id: `mock-${baseId}-2`,
+      date: "2024-01-21", 
+      taskDescription: "Code review and documentation updates",
+      project: "Website Redesign"
+    },
+    {
+      id: `mock-${baseId}-3`,
+      date: "2024-01-22",
+      taskDescription: "User authentication module - Login/logout functionality", 
+      project: "Mobile App"
+    },
+    {
+      id: `mock-${baseId}-4`,
+      date: "2024-01-22",
+      taskDescription: "Daily standup and sprint planning meeting",
+      project: "Mobile App"
+    },
+    {
+      id: `mock-${baseId}-5`,
+      date: "2024-01-23",
+      taskDescription: "Database optimization and query performance tuning",
+      project: "Backend Services"
+    },
+    {
+      id: `mock-${baseId}-6`,
+      date: "2024-01-23",
+      taskDescription: "API endpoint testing and bug fixes", 
+      project: "Backend Services"
+    },
+    {
+      id: `mock-${baseId}-7`,
+      date: "2024-01-24",
+      taskDescription: "Client presentation and feature demo preparation",
+      project: "Project Management"
+    },
+    {
+      id: `mock-${baseId}-8`,
+      date: "2024-01-25",
+      taskDescription: "UI component library updates and styling improvements",
+      project: "Design System"
+    }
+  ];
+
+  // Assign hours based on target total
+  if (targetHours === 0) {
+    // MISSING status - all entries have 0 hours
+    return baseEntries.map(entry => ({
+      ...entry,
+      hoursWorked: 0
+    }));
+  } else if (targetHours === 40) {
+    // COMPLETED status - exactly 40 hours distributed realistically
+    const hourDistribution = [8, 2, 7, 1, 6, 2, 8, 6]; // Totals to 40
+    return baseEntries.map((entry, index) => ({
+      ...entry,
+      hoursWorked: hourDistribution[index] || 0
+    }));
+  } else {
+    // INCOMPLETE status - distribute hours proportionally but under 40
+    const hourDistribution = [8, 2, 7, 1, 6, 2, 8, 6]; // Base distribution
+    const scaleFactor = targetHours / 40;
+    
+    return baseEntries.map((entry, index) => {
+      const baseHours = hourDistribution[index] || 0;
+      const scaledHours = Math.round(baseHours * scaleFactor * 4) / 4; // Round to nearest 0.25
+      return {
+        ...entry,
+        hoursWorked: scaledHours
+      };
+    }).filter(entry => entry.hoursWorked > 0); // Remove 0-hour entries for incomplete
+  }
+};
+
+// Helper to decide what entries to show
+const getDisplayEntries = (timesheet?: TimesheetWeek | null): TimesheetEntry[] => {
+  // For new timesheets (create scenario), treat as missing (0 hours)
+  const effectiveTimesheet = timesheet || { 
+    id: 'new',
+    totalHours: 0 // New timesheets start with 0 hours like missing ones
+  };
+  
+  console.log(`Creating status-appropriate mock entries for ${effectiveTimesheet.id || 'new timesheet'} with ${effectiveTimesheet.totalHours || 0} hours`);
+  return createRichMockEntries(effectiveTimesheet);
+};
 
 export default function ThisWeeksTimesheet({ timesheet }: Props) {
   const router = useRouter();
   
-  // Normalize entries from timesheet or use defaults
-  const initialEntries = timesheet?.entries?.length 
-    ? timesheet.entries.map(normalizeEntry)
-    : [
-        {
-          id: "default-1",
-          date: "2024-01-21",
-          hoursWorked: 0,
-          taskDescription: "Homepage Development",
-          project: "Project Name"
-        },
-        {
-          id: "default-2", 
-          date: "2024-01-21",
-          hoursWorked: 0,
-          taskDescription: "Homepage Development",
-          project: "Project Name"
-        },
-        // ... add more default entries
-      ];
+  // ✅ FIXED: Now shows rich mock data for ALL scenarios (Create, View, Update)
+  const initialEntries = getDisplayEntries(timesheet);
 
   const [entries, setEntries] = useState<TimesheetEntry[]>(initialEntries);
   const [submitting, setSubmitting] = useState(false);
@@ -83,8 +163,16 @@ export default function ThisWeeksTimesheet({ timesheet }: Props) {
   const [selectedDate, setSelectedDate] = useState<string>("");
   const isEditing = !!timesheet?.id;
 
-  // Calculate total hours
-  const totalHours = entries.reduce((sum, entry) => sum + entry.hoursWorked, 0);
+  // Debug logging
+  console.log("ThisWeeksTimesheet rendered with:", {
+    timesheet: timesheet?.id,
+    entriesCount: entries.length,
+    isEditing,
+    firstEntry: entries[0]
+  });
+
+  // Calculate total hours with proper rounding
+  const totalHours = Math.round(entries.reduce((sum, entry) => sum + entry.hoursWorked, 0) * 100) / 100;
   const targetHours = 40;
   const progressPercentage = Math.min((totalHours / targetHours) * 100, 100);
 

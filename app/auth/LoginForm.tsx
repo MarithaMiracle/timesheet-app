@@ -34,9 +34,13 @@ export default function LoginForm() {
       });
 
       if (result?.error) {
-        // Handle specific errors if next-auth credentials provider returns them
-        // For our dummy auth, we'll just show a generic error or a custom one
-        setError(result.error);
+        // ✅ IMPROVED: Handle the specific CredentialsSignin case
+        if (result.error === 'CredentialsSignin') {
+          setError('Invalid email or password. Please use test@example.com and password123');
+        } else {
+          // Use the custom error message from auth.ts
+          setError(result.error);
+        }
       } else if (result?.ok) {
         // On success, redirect to dashboard
         router.push('/dashboard');
@@ -91,8 +95,16 @@ export default function LoginForm() {
         </label>
       </div>
 
+      {/* ✅ IMPROVED: Better error styling */}
       {error && (
-        <p className="text-red-500 text-sm mb-4">{error}</p>
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+          <p className="text-red-600 text-sm">{error}</p>
+          {error.includes('test@example.com') && (
+            <p className="text-red-500 text-xs mt-1">
+              
+            </p>
+          )}
+        </div>
       )}
 
       <Button

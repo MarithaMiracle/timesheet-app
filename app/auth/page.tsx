@@ -9,7 +9,7 @@ export default function LoginPage() {
       <div className="flex flex-col justify-between w-full md:w-1/2 p-8 md:p-16 bg-white">
         <LoginFormContainer />
         <div className="text-center text-gray-500 text-sm mt-8 md:mt-0">
-          © 2024 tentwenty
+          © 2025 tentwenty
         </div>
       </div>
 
