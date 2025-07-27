@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { cn } from '../../../lib/utils';
 
-interface TableCellProps extends React.TdHTMLAttributes<HTMLTableDataCellElement> {}
+type TableCellProps = React.TdHTMLAttributes<HTMLTableDataCellElement>;
 
 const TableCell = React.forwardRef<HTMLTableDataCellElement, TableCellProps>(({ className, ...props }, ref) => (
   <td

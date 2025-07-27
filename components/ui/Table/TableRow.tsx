@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { cn } from '../../../lib/utils';
 
-interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {}
+type TableRowProps = React.HTMLAttributes<HTMLTableRowElement>;
 
 const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(({ className, ...props }, ref) => (
   <tr

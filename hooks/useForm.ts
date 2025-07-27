@@ -10,12 +10,6 @@ interface UseFormOptions<T> {
   validateOnBlur?: boolean;
 }
 
-interface FormField {
-  value: any;
-  error: string | null;
-  touched: boolean;
-}
-
 interface UseFormReturn<T> {
   values: T;
   errors: Record<keyof T, string | null>;
@@ -70,13 +64,14 @@ export default function useForm<T extends Record<string, any>>({
     if (!validationSchema) return null;
 
     try {
-      // Create a partial schema for just this field
-      const fieldSchema = validationSchema.pick({ [field]: true } as any);
-      await fieldSchema.parseAsync({ [field]: values[field] });
+      // Validate just the single field value
+      const fieldValue = values[field];
+      await validationSchema.parseAsync({ ...values, [field]: fieldValue });
       return null;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return error.errors[0]?.message || 'Validation error';
+        const fieldError = error.issues.find(err => err.path[0] === field);
+        return fieldError?.message || null;
       }
       return 'Validation error';
     }
@@ -88,27 +83,125 @@ export default function useForm<T extends Record<string, any>>({
 
     try {
       await validationSchema.parseAsync(values);
-      setErrors(Object.keys(initialValues).reduce((acc, key) => {
+      // Clear all errors if validation passes
+      const clearedErrors = Object.keys(initialValues).reduce((acc, key) => {
         acc[key as keyof T] = null;
         return acc;
-      }, {} as Record<keyof T, string | null>));
+      }, {} as Record<keyof T, string | null>);
+      setErrors(clearedErrors);
       return true;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const newErrors = { ...errors };
-        
-        // Reset all errors first
-        Object.keys(newErrors).forEach(key => {
-          newErrors[key as keyof T] = null;
-        });
+        const newErrors = Object.keys(initialValues).reduce((acc, key) => {
+          acc[key as keyof T] = null;
+          return acc;
+        }, {} as Record<keyof T, string | null>);
 
-        // Set new errors
-        error.errors.forEach(err => {
+        // Set new errors from validation
+        error.issues.forEach(err => {
           const field = err.path[0] as keyof T;
-          if (field) {
+          if (field && field in newErrors) {
             newErrors[field] = err.message;
           }
         });
 
         setErrors(newErrors);
       }
+      return false;
+    }
+  }, [validationSchema, values, initialValues]);
+
+  // Handle field changes
+  const handleChange = useCallback((field: keyof T) => async (value: any) => {
+    setValues(prev => ({ ...prev, [field]: value }));
+
+    if (validateOnChange) {
+      const error = await validateField(field);
+      setErrors(prev => ({ ...prev, [field]: error }));
+    }
+  }, [validateOnChange, validateField]);
+
+  // Handle field blur
+  const handleBlur = useCallback((field: keyof T) => async () => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+
+    if (validateOnBlur) {
+      const error = await validateField(field);
+      setErrors(prev => ({ ...prev, [field]: error }));
+    }
+  }, [validateOnBlur, validateField]);
+
+  // Handle form submission
+  const handleSubmit = useCallback(async (e?: React.FormEvent) => {
+    if (e) {
+      e.preventDefault();
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const isFormValid = await validateForm();
+      
+      if (isFormValid && onSubmit) {
+        await onSubmit(values);
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [validateForm, onSubmit, values]);
+
+  // Set field value
+  const setFieldValue = useCallback((field: keyof T, value: any) => {
+    setValues(prev => ({ ...prev, [field]: value }));
+  }, []);
+
+  // Set field error
+  const setFieldError = useCallback((field: keyof T, error: string | null) => {
+    setErrors(prev => ({ ...prev, [field]: error }));
+  }, []);
+
+  // Set field touched
+  const setFieldTouched = useCallback((field: keyof T, touched: boolean) => {
+    setTouched(prev => ({ ...prev, [field]: touched }));
+  }, []);
+
+  // Reset form
+  const resetForm = useCallback((newValues?: T) => {
+    const resetValues = newValues || initialValues;
+    setValues(resetValues);
+    
+    const clearedErrors = Object.keys(resetValues).reduce((acc, key) => {
+      acc[key as keyof T] = null;
+      return acc;
+    }, {} as Record<keyof T, string | null>);
+    setErrors(clearedErrors);
+
+    const clearedTouched = Object.keys(resetValues).reduce((acc, key) => {
+      acc[key as keyof T] = false;
+      return acc;
+    }, {} as Record<keyof T, boolean>);
+    setTouched(clearedTouched);
+    
+    setIsSubmitting(false);
+  }, [initialValues]);
+
+  return {
+    values,
+    errors,
+    touched,
+    isValid,
+    isSubmitting,
+    isDirty,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    setFieldValue,
+    setFieldError,
+    setFieldTouched,
+    resetForm,
+    validateField,
+    validateForm,
+  };
+}

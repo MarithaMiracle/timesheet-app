@@ -1,4 +1,4 @@
-// app/api/timesheets/[id]/route.ts
+// app/dashboard/timesheets/week/[id]/route.ts
 
 import { NextRequest, NextResponse } from 'next/server';
 import { mockTimesheetData } from '@/lib/mockData';
@@ -7,8 +7,9 @@ import { authOptions } from '@/lib/auth';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const params = await context.params;
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {

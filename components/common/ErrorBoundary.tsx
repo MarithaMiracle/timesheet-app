@@ -2,6 +2,7 @@
 'use client';
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
+import Link from 'next/link';
 import Button from '../ui/Button';
 
 interface Props {
@@ -84,7 +85,7 @@ class ErrorBoundary extends Component<Props, State> {
                 </h2>
                 
                 <p className="text-sm text-gray-600 mb-6">
-                  We're sorry, but an unexpected error occurred. Please try refreshing the page or contact support if the problem persists.
+                  We&apos;re sorry, but an unexpected error occurred. Please try refreshing the page or contact support if the problem persists.
                 </p>
 
                 {/* Show error details in development */}
@@ -117,12 +118,12 @@ class ErrorBoundary extends Component<Props, State> {
                 </div>
 
                 <div className="mt-6">
-                  <a
+                  <Link
                     href="/"
                     className="text-sm text-blue-600 hover:text-blue-500"
                   >
                     ← Back to Home
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

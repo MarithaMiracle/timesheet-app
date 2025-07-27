@@ -13,11 +13,12 @@ export function formatDateRange(startDate: string, endDate: string): string {
 
   const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
 
-  let formattedStartDate = start.toLocaleDateString('en-US', options);
-  let formattedEndDate = end.toLocaleDateString('en-US', options);
+  const formattedStartDate = start.toLocaleDateString('en-US', options);
+  const formattedEndDate = end.toLocaleDateString('en-US', options);
 
   if (start.getFullYear() !== end.getFullYear()) {
-    formattedStartDate = start.toLocaleDateString('en-US', { ...options, year: 'numeric' });
+    const formattedStartDateWithYear = start.toLocaleDateString('en-US', { ...options, year: 'numeric' });
+    return `${formattedStartDateWithYear} - ${formattedEndDate}, ${end.getFullYear()}`;
   }
 
   return `${formattedStartDate} - ${formattedEndDate}, ${end.getFullYear()}`;

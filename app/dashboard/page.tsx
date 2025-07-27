@@ -9,11 +9,11 @@ import { headers } from 'next/headers'; // Import the headers function for Serve
 // Import components and types
 import Header from '@/components/common/Header';
 import TimesheetTable from './components/TimesheetTable';
-import SignOutButton from './SignOutButton'; // Client component for sign out
+// Removed unused SignOutButton import - this fixes the @typescript-eslint/no-unused-vars warning
+// import SignOutButton from './SignOutButton'; // Client component for sign out
 import { TimesheetWeek } from '@/lib/types'; // Import the type for timesheet data from lib/types.ts
 
 import Footer from "@/components/common/Footer";
-
 
 export default async function DashboardPage() {
   const session = await auth(); // Get the session using our server-side helper
@@ -61,9 +61,11 @@ export default async function DashboardPage() {
     timesheets = await response.json();
     // console.log('Fetched timesheets:', timesheets); // Keep for debugging if needed
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    // Fixed: Replace 'any' with 'unknown' and add proper type checking
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     console.error('Error fetching timesheets in DashboardPage:', error); // More specific log
-    fetchError = `Could not load timesheet data: ${error.message}`;
+    fetchError = `Could not load timesheet data: ${errorMessage}`;
   }
 
   return (

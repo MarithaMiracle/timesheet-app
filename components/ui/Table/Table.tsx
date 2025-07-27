@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { cn } from '../../../lib/utils'; // Adjust path to utils if different
 
-interface TableProps extends React.TableHTMLAttributes<HTMLTableElement> {}
+type TableProps = React.TableHTMLAttributes<HTMLTableElement>;
 
 const Table = React.forwardRef<HTMLTableElement, TableProps>(({ className, ...props }, ref) => (
   <div className="relative w-full overflow-auto">

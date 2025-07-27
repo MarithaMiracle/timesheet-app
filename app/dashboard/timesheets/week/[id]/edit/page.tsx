@@ -8,7 +8,7 @@ import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import ThisWeeksTimesheet from '@/components/common/ThisWeeksTimesheet';
 
-import { TimesheetWeek } from '@/lib/mockData';
+import { TimesheetWeek } from '@/types/timesheet'; // Import from shared types
 
 interface EditPageProps {
   params: Promise<{ id: string }>; // Changed to Promise
@@ -50,19 +50,18 @@ export default async function EditTimesheetPage({ params }: EditPageProps) {
     }
 
     timesheet = await res.json();
-  } catch (err: any) {
-    console.error('Error fetching timesheet for edit page:', err.message);
-    fetchError = `Could not load timesheet: ${err.message}`;
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+    console.error('Error fetching timesheet for edit page:', errorMessage);
+    fetchError = `Could not load timesheet: ${errorMessage}`;
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <div className="min-h-screen mb-20 bg-gray-100 flex flex-col">
       <Header userName={session.user.name || 'John Doe'} />
 
-      <main className="p-4 md:p-8 flex-grow">
+      <main className="p-4 md:p-8">
         <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-md p-6">
-          <h1 className="text-2xl font-bold text-gray-800 mb-6">Edit Timesheet</h1>
-
           {fetchError ? (
             <p className="text-red-500">{fetchError}</p>
           ) : timesheet ? (

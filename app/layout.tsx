@@ -5,7 +5,11 @@ import "./globals.css";
 import NextAuthSessionProvider from '@/components/providers/NextAuthSessionProvider';
 import { Toaster } from "react-hot-toast";
 
-const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
+const inter = Inter({ 
+  subsets: ["latin"], 
+  variable: '--font-inter',
+  display: 'swap', // Add display swap for better performance
+});
 
 export const metadata: Metadata = {
   title: "Ticktock - Login",
@@ -20,11 +24,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Add Material Icons */}
+        {/* Only include Material Icons - Inter is handled by Next.js font optimization */}
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
       </head>
-      <body className={`${inter.variable} font-sans`} style={{ fontFamily: 'Inter, sans-serif', backgroundColor: '#f8f9fa' }}>
+      <body className={`${inter.variable} font-sans`} style={{ fontFamily: 'var(--font-inter), Inter, sans-serif', backgroundColor: '#f8f9fa' }}>
         <NextAuthSessionProvider>
           {children}
           <Toaster position="top-right" />

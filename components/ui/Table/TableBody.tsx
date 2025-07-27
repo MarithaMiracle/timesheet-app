@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { cn } from '../../../lib/utils'; // Adjust path to utils if different
 
-interface TableBodyProps extends React.HTMLAttributes<HTMLTableSectionElement> {}
+type TableBodyProps = React.HTMLAttributes<HTMLTableSectionElement>;
 
 const TableBody = React.forwardRef<HTMLTableSectionElement, TableBodyProps>(({ className, ...props }, ref) => (
   <tbody

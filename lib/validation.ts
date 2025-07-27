@@ -54,9 +54,9 @@ export function validateForm<T>(
   }
 
   const errors: Record<string, string> = {};
-  result.error.errors.forEach((error: { path: any[]; message: string; }) => {
-    const path = error.path.join('.');
-    errors[path] = error.message;
+  result.error.issues.forEach((issue) => {
+    const path = issue.path.join('.');
+    errors[path] = issue.message;
   });
 
   return { success: false, errors };

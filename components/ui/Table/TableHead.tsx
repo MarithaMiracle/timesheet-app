@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { cn } from '../../../lib/utils';
 
-interface TableHeadProps extends React.HTMLAttributes<HTMLTableSectionElement> {}
+type TableHeadProps = React.HTMLAttributes<HTMLTableSectionElement>;
 
 const TableHead = React.forwardRef<HTMLTableSectionElement, TableHeadProps>(({ className, ...props }, ref) => (
   <thead
